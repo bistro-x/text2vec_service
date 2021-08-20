@@ -2,10 +2,11 @@ import os
 import sentence_transformers
 from sentence_transformers.util import snapshot_download
 
+from config import Config
 
-model = os.getenv('MODEL', 'paraphrase-multilingual-MiniLM-L12-v2')
-models_path = './models'
-model_path = os.path.join(models_path, model)
+model = Config.MODEL
+models_path = Config.MODELS_PATH
+model_path = Config.MODEL_PATH
 
 if not os.path.exists(models_path):
     os.mkdir(models_path)

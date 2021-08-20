@@ -7,8 +7,10 @@ from flask import request, jsonify, Flask
 from text2vec import SBert
 from sentence_transformers.util import cos_sim, semantic_search
 
+from config import Config
+
 app = Flask(__name__, root_path=os.getcwd())
-model = SBert("./models/paraphrase-multilingual-MiniLM-L12-v2")
+model = SBert(Config.MODEL_PATH)
 
 
 @app.route("/semantic_search", methods=["POST"])
