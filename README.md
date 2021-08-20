@@ -4,14 +4,44 @@
 
 ## API
 
-```http request
-# 计算句子与文档集之间的相似度值
-[POST] /semantic_search
- json: {"sentences1": sentences1, "sentences2", sentences2}
+### 计算句子与文档集之间的相似度值
+- Method: **POST**
+- Url: /semantic_search
+- Body:
+```json
+{
+  "sentences1": ["sentence1", "sentence2", "sentence3"],
+  "sentences2": ["sentence1", "sentence2", "sentence3"]
+}
+```
+- Response: 
+```json
+{
+  "result": [
+    [0, 1, 1], 
+    [0, 1, 1], 
+    [0, 1, 1]
+  ]}
+```
 
-# 计算句子之间的相似度值
-[POST] /cos_sim
-json: {"sentences1": sentences1, "sentences2", sentences2}
+### 计算句子之间的相似度值
+- Method: **POST**
+- Url: /cos_sim
+- Body:
+```json
+{
+  "sentences1": ["sentence1", "sentence2", "sentence3"],
+  "sentences2": ["sentence1", "sentence2", "sentence3"]
+}
+```
+- Response: 
+```json
+{
+  "result": [
+    [0, 1, 1], 
+    [0, 1, 1], 
+    [0, 1, 1]
+  ]}
 ```
 
 ## 环境要求
