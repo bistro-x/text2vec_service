@@ -45,5 +45,18 @@ def paraphrase_cos_sim():
     return jsonify({"result": cosine_scores.tolist()})
 
 
+@app.route("/computing_embeddings", methods=["POST"])
+def computing_embeddings():
+    """
+    计算句向量
+    :return:
+    """
+    param = {**(request.form or {}), **(request.json or {})}
+    sentences = param.pop("sentences")
+    embeddings = model.encode(sentences)
+
+    return jsonify({"result": embeddings.tolist()})
+
+
 if __name__ == "__main__":
     app.run("0.0.0.0", port=5000)
