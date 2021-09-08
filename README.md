@@ -58,6 +58,26 @@
 }
 ```
 
+### 计算句子文本向量
+- Method: **POST**
+- Url: /computing_embeddings
+- Body:
+```json
+{
+  "sentences": ["sentence1", "sentence2", "sentence3"]
+}
+```
+- Response: 
+```json
+{
+  "result": [
+    [0, 1, 1], 
+    [0, 1, 1], 
+    [0, 1, 1]
+  ]
+}
+```
+
 ## 环境要求
 
 1. python 3.8+
