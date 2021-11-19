@@ -6,7 +6,7 @@ import os
 from flask import request, jsonify, Flask
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import cos_sim, semantic_search
-
+import requests
 from config import Config
 
 app = Flask(__name__, root_path=os.getcwd())
@@ -16,11 +16,10 @@ model = SentenceTransformer(Config.MODEL_PATH)
 if Config.TOKEN_PATH and os.path.exists(Config.TOKEN_PATH):
     with open(Config.TOKEN_PATH, "r") as file:
         data = file.readlines()
-        print(data)
         model.tokenizer.add_tokens(data, special_tokens=True)
 
 if Config.TOKEN_URL:
-    response = request.get(Config.TOKEN_URL)
+    response = requests.get(Config.TOKEN_URL)
     if response.ok:
         content = response.json()
         model.tokenizer.add_tokens(content.get("data"), special_tokens=True)
