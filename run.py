@@ -4,7 +4,8 @@ Documents: https://github.com/shibing624/text2vec
 import os
 
 from flask import request, jsonify, Flask
-from sentence_transformers.util import cos_sim, semantic_search, SentenceTransformer
+from sentence_transformers import SentenceTransformer
+from sentence_transformers.util import cos_sim, semantic_search
 
 from config import Config
 
@@ -12,16 +13,17 @@ app = Flask(__name__, root_path=os.getcwd())
 model = SentenceTransformer(Config.MODEL_PATH)
 
 # 加载分词
-if Config.get("TOKEN_PATH") and os.path.exists(Config.get("TOKEN_PATH")):
-    with open(Config.get("TOKEN_PATH"), "r") as file:
+if Config.TOKEN_PATH and os.path.exists(Config.TOKEN_PATH):
+    with open(Config.TOKEN_PATH, "r") as file:
         data = file.readlines()
-        model.tokenizer.add_tokens(data, special_tokens=False)
+        print(data)
+        model.tokenizer.add_tokens(data, special_tokens=True)
 
-if Config.get("TOKEN_URL"):
-    response = request.get(Config.get("TOKEN_URL"))
+if Config.TOKEN_URL:
+    response = request.get(Config.TOKEN_URL)
     if response.ok:
         content = response.json()
-        model.tokenizer.add_tokens(content.get("data"), special_tokens=False)
+        model.tokenizer.add_tokens(content.get("data"), special_tokens=True)
     else:
         print(f"请求分词服务发生错误:{response.message}")
 
