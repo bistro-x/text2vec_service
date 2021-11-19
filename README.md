@@ -101,6 +101,11 @@
 ├── /init_model.py -- 构建镜像中预加载模型脚本
 ├── /Dockerfile -- 项目镜像构建文件
 ```
+## 编译
+```shell
+docker build . -f ./Dockerfile -t ai_service/text2vec_service:master
+docker push ai_service/text2vec_service:master 
+```
 
 ## 部署/运行
 
