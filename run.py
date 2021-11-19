@@ -4,13 +4,26 @@ Documents: https://github.com/shibing624/text2vec
 import os
 
 from flask import request, jsonify, Flask
-from text2vec import SBert
-from sentence_transformers.util import cos_sim, semantic_search
+from sentence_transformers.util import cos_sim, semantic_search, SentenceTransformer
 
 from config import Config
 
 app = Flask(__name__, root_path=os.getcwd())
-model = SBert(Config.MODEL_PATH)
+model = SentenceTransformer(Config.MODEL_PATH)
+
+# 加载分词
+if Config.get("TOKEN_PATH") and os.path.exists(Config.get("TOKEN_PATH")):
+    with open(Config.get("TOKEN_PATH"), "r") as file:
+        data = file.readlines()
+        model.tokenizer.add_tokens(data, special_tokens=False)
+
+if Config.get("TOKEN_URL"):
+    response = request.get(Config.get("TOKEN_URL"))
+    if response.ok:
+        content = response.json()
+        model.tokenizer.add_tokens(content.get("data"), special_tokens=False)
+    else:
+        print(f"请求分词服务发生错误:{response.message}")
 
 
 @app.route("/semantic_search", methods=["POST"])
