@@ -12,19 +12,34 @@ from config import Config
 app = Flask(__name__, root_path=os.getcwd())
 model = SentenceTransformer(Config.MODEL_PATH)
 
-# 加载分词
-if Config.TOKEN_PATH and os.path.exists(Config.TOKEN_PATH):
-    with open(Config.TOKEN_PATH, "r") as file:
-        data = file.readlines()
-        model.tokenizer.add_tokens(data, special_tokens=True)
 
-if Config.TOKEN_URL:
-    response = requests.get(Config.TOKEN_URL)
-    if response.ok:
-        content = response.json()
-        model.tokenizer.add_tokens(content.get("data"), special_tokens=True)
-    else:
-        print(f"请求分词服务发生错误:{response.message}")
+@app.route("/token/sync", methods=["POST"])
+def post_token_load():
+    """
+    同步定义的分词信息
+    :return:
+    """
+
+    token_load()
+    return jsonify({"result": True})
+
+
+def token_load():
+    # 加载分词
+    if Config.TOKEN_PATH and os.path.exists(Config.TOKEN_PATH):
+        with open(Config.TOKEN_PATH, "r") as file:
+            data = file.readlines()
+            model.tokenizer.add_tokens(data, special_tokens=True)
+
+    if Config.TOKEN_URL:
+        response = requests.get(Config.TOKEN_URL)
+        if response.ok:
+            content = response.json()
+            model.tokenizer.add_tokens(content.get("data"), special_tokens=True)
+        else:
+            print(f"请求分词服务发生错误:{response.message}")
+
+    print("成功加载数据")
 
 
 @app.route("/semantic_search", methods=["POST"])
@@ -73,4 +88,5 @@ def computing_embeddings():
 
 
 if __name__ == "__main__":
+    token_load()
     app.run("0.0.0.0", port=5000)
