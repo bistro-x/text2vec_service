@@ -45,11 +45,26 @@ def token_load():
         else:
             print(f"error load token:{response.message}")
     tokens = sorted(set(tokens),key =lambda item:len(item),reverse=True)
-    
+    # print(tokens)
     model.tokenizer.add_tokens(tokens, special_tokens=True)
     model._first_module().auto_model.resize_token_embeddings(len(model.tokenizer))
+    # print(model.tokenizer.tokenize("华宝宝康消费品证券投资基金基金托管费"))
 
     print("success load token")
+
+
+
+@app.route("/semantic_search", methods=["POST"])
+def paraphrase_semantic_search():
+    """
+    计算句子与文档集之间的相似度值
+    :return:
+    """
+    global model
+
+    param = {**(request.form or {}), **(request.json or {})}
+    sentences = param.pop("sentences")
+    return jsonify({"result": model.tokenizer.tokenize(sentences)})
 
 
 @app.route("/semantic_search", methods=["POST"])
@@ -63,8 +78,6 @@ def paraphrase_semantic_search():
     param = {**(request.form or {}), **(request.json or {})}
     sentences1 = param.pop("sentences1")
     sentences2 = param.pop("sentences2")
-    print(model.tokenizer.tokenize(sentences1))
-    print(model.tokenizer.tokenize(sentences2))
     embeddings1 = model.encode(sentences1)
     embeddings2 = model.encode(sentences2)
     hits = semantic_search(embeddings1, embeddings2, **param)
