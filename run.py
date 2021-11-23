@@ -27,19 +27,26 @@ def post_token_load():
 
 
 def token_load():
+    global model
+    
+    tokens = []
     # 加载分词
     if Config.TOKEN_PATH and os.path.exists(Config.TOKEN_PATH):
         with open(Config.TOKEN_PATH, "r") as file:
-            data = file.readlines()
-            model.tokenizer.add_tokens(data, special_tokens=True)
+            data = file.read().split('\n')
+            tokens.extend(data or [])
 
     if Config.TOKEN_URL:
         response = requests.get(Config.TOKEN_URL)
         if response.ok:
             content = response.json()
-            model.tokenizer.add_tokens(content.get("data"), special_tokens=True)
+            tokens.extend(content.get("data") or [])
+
         else:
             print(f"error load token:{response.message}")
+    tokens = sorted(set(tokens),key =lambda item:len(item),reverse=True)
+    
+    model.tokenizer.add_tokens(tokens, special_tokens=True)
     model._first_module().auto_model.resize_token_embeddings(len(model.tokenizer))
 
     print("success load token")
@@ -51,9 +58,13 @@ def paraphrase_semantic_search():
     计算句子与文档集之间的相似度值
     :return:
     """
+    global model
+
     param = {**(request.form or {}), **(request.json or {})}
     sentences1 = param.pop("sentences1")
     sentences2 = param.pop("sentences2")
+    print(model.tokenizer.tokenize(sentences1))
+    print(model.tokenizer.tokenize(sentences2))
     embeddings1 = model.encode(sentences1)
     embeddings2 = model.encode(sentences2)
     hits = semantic_search(embeddings1, embeddings2, **param)
