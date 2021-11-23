@@ -103,8 +103,8 @@
 ```
 ## 编译
 ```shell
-docker build . -f ./Dockerfile -t ai_service/text2vec_service:master
-docker push ai_service/text2vec_service:master 
+docker build . -f ./Dockerfile -t server.aiknown.cn:31003/ai_service/text2vec_service:master
+docker push server.aiknown.cn:31003/ai_service/text2vec_service:master 
 ```
 
 ## 部署/运行

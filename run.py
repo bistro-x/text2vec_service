@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 Documents: https://github.com/shibing624/text2vec
 """
@@ -37,9 +39,10 @@ def token_load():
             content = response.json()
             model.tokenizer.add_tokens(content.get("data"), special_tokens=True)
         else:
-            print(f"请求分词服务发生错误:{response.message}")
+            print(f"error load token:{response.message}")
+    model._first_module().auto_model.resize_token_embeddings(len(model.tokenizer))
 
-    print("成功加载数据")
+    print("success load token")
 
 
 @app.route("/semantic_search", methods=["POST"])

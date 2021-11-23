@@ -11,5 +11,5 @@ RUN mv sentencepiece-0.1.96-cp36-cp36m-manylinux_2_17_x86_64.manylinux2014_x86_6
 RUN pip3 install sentencepiece-0.1.96-cp36-cp36m-linux_2_17_x86_64.linux_x86_64.whl
 RUN pip3 install -r ./requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 RUN python3 init_model.py
-
+RUN rm -rf /usr/bin/python && ln -s /usr/bin/python3  /usr/bin/python
 CMD ./run.sh
