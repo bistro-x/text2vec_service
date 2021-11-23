@@ -54,8 +54,8 @@ def token_load():
 
 
 
-@app.route("/semantic_search", methods=["POST"])
-def paraphrase_semantic_search():
+@app.route("/tokenize", methods=["POST"])
+def tokenize():
     """
     计算句子与文档集之间的相似度值
     :return:
