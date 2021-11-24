@@ -21,8 +21,8 @@ def post_token_load():
     同步定义的分词信息
     :return:
     """
-
     token_load()
+
     return jsonify({"result": True})
 
 
@@ -30,6 +30,8 @@ def token_load():
     global model
     
     tokens = []
+    model = SentenceTransformer(Config.MODEL_PATH)
+
     # 加载分词
     if Config.TOKEN_PATH and os.path.exists(Config.TOKEN_PATH):
         with open(Config.TOKEN_PATH, "r") as file:
@@ -46,7 +48,7 @@ def token_load():
             print(f"error load token:{response.message}")
     tokens = sorted(set(tokens),key =lambda item:len(item),reverse=True)
     # print(tokens)
-    model.tokenizer.add_tokens(tokens, special_tokens=True)
+    model.tokenizer.add_tokens(tokens, special_tokens=False)
     model._first_module().auto_model.resize_token_embeddings(len(model.tokenizer))
     # print(model.tokenizer.tokenize("华宝宝康消费品证券投资基金基金托管费"))
 
