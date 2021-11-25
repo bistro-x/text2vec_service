@@ -13,5 +13,6 @@ class Config:
 
     TOKEN_PATH = os.getenv("TOKEN_PATH", "./token.txt")  # 词汇文件
     TOKEN_URL = os.getenv(
-        "TOKEN_URL"
+        "TOKEN_URL",
+        "http://101.231.133.233:31016/z_know_i nfo/api/domain/token?domain_key=fsfund",
     )  # 词汇文件的接口返回

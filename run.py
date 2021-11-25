@@ -28,32 +28,45 @@ def post_token_load():
 
 def token_load():
     global model
-    
+    import json
+
     tokens = []
     model = SentenceTransformer(Config.MODEL_PATH)
 
     # 加载分词
     if Config.TOKEN_PATH and os.path.exists(Config.TOKEN_PATH):
         with open(Config.TOKEN_PATH, "r") as file:
-            data = file.read().split('\n')
+            data = file.read().split("\n")
             tokens.extend(data or [])
 
     if Config.TOKEN_URL:
+        save_file_path = "token_url.json"  # 保存文件
         response = requests.get(Config.TOKEN_URL)
+
         if response.ok:
             content = response.json()
             tokens.extend(content.get("data") or [])
-
+            # 写入缓存文件
+            with open(save_file_path, "w") as token_file:
+                json.dump(content.get("data"), token_file)
         else:
-            print(f"error load token:{response.message}")
-    tokens = sorted(set(tokens),key =lambda item:len(item),reverse=True)
+            print("error load token from url")
+
+            # 读取缓存文件
+            if os.path.exists(save_file_path):
+                with open(save_file_path, "r") as token_file:
+                    data = json.load(token_file)
+                    print(data)
+                    tokens.extend(data)
+                    print("load temp file")
+
+    tokens = sorted(set(tokens), key=lambda item: len(item), reverse=True)
     # print(tokens)
     model.tokenizer.add_tokens(tokens, special_tokens=False)
     model._first_module().auto_model.resize_token_embeddings(len(model.tokenizer))
     # print(model.tokenizer.tokenize("华宝宝康消费品证券投资基金基金托管费"))
 
     print("success load token")
-
 
 
 @app.route("/tokenize", methods=["POST"])
@@ -117,5 +130,9 @@ def computing_embeddings():
 
 
 if __name__ == "__main__":
-    token_load()
+    try:
+        token_load()
+    except Exception as e:
+        print(e)
+
     app.run("0.0.0.0", port=5000)
