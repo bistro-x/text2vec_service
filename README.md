@@ -103,7 +103,13 @@
 ```
 ## 编译
 ```shell
+# 初始化打包
 docker build . -f ./Dockerfile -t server.aiknown.cn:31003/ai_service/text2vec_service:master
+
+# 持续更新
+docker build . -f ./Dockerfile_continue -t server.aiknown.cn:31003/ai_service/text2vec_service:master
+
+# push
 docker push server.aiknown.cn:31003/ai_service/text2vec_service:master 
 ```
 

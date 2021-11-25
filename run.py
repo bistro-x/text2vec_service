@@ -128,11 +128,5 @@ def computing_embeddings():
 
     return jsonify({"result": embeddings.tolist()})
 
-
 if __name__ == "__main__":
-    try:
-        token_load()
-    except Exception as e:
-        print(e)
-
     app.run("0.0.0.0", port=5000)

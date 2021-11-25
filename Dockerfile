@@ -13,3 +13,4 @@ RUN pip3 install -r ./requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simp
 RUN python3 init_model.py
 RUN rm -rf /usr/bin/python && ln -s /usr/bin/python3  /usr/bin/python
 CMD ./run.sh
+

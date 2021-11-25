@@ -1,0 +1,4 @@
+FROM server.aiknown.cn:31003/ai_service/text2vec_service:master
+
+COPY "./" "./"
+RUN chmod +x ./run.sh
