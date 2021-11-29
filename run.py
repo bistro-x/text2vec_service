@@ -11,10 +11,17 @@ from sentence_transformers.util import cos_sim, semantic_search
 import requests
 from config import Config
 from transformers import AutoTokenizer, AutoModel
+import shutil
 
 app = Flask(__name__, root_path=os.getcwd())
-model = SentenceTransformer(Config.MODEL_PATH)
-model_path = "./models/personalized"  # 个性化模型路径
+
+personal_model_path = "./models/personalized"  # 个性化模型路径
+
+# 加载已有分词
+if os.path.exists(personal_model_path):
+    model = SentenceTransformer(personal_model_path)
+else:
+    model = SentenceTransformer(Config.MODEL_PATH)
 
 
 @app.route("/token/sync", methods=["POST"])
@@ -49,11 +56,13 @@ def token_load():
             tokens.extend(content.get("data") or [])
         else:
             print("error load token from url")
+            
+    shutil.copytree(Config.MODEL_PATH, personal_model_path)
 
     tokens = sorted(set(tokens), key=lambda item: len(item), reverse=True)
-    model.tokenizer.add_tokens(tokens, special_tokens=False)
+    model.tokenizer.add_tokens(tokens, special_tokens=True)
     model._first_module().auto_model.resize_token_embeddings(len(model.tokenizer))
-    model.tokenizer.save_pretrained(model_path)
+    model.save(personal_model_path)
     print("success load token")
 
 
@@ -117,14 +126,6 @@ def computing_embeddings():
     return jsonify({"result": embeddings.tolist()})
 
 
-# 加载已有分词
-if os.path.exists(model_path):
-    word_embedding_model = models.Transformer(Config.MODEL_PATH)
-    word_embedding_model.tokenizer = AutoTokenizer.from_pretrained(model_path)
-    word_embedding_model.auto_model.resize_token_embeddings(len(word_embedding_model.tokenizer))
-    pooling_model = models.Pooling(word_embedding_model.get_word_embedding_dimension())
-    model = SentenceTransformer(modules=[word_embedding_model, pooling_model])
-    
 # 运行
 if __name__ == "__main__":
     app.run("0.0.0.0", port=5000)
