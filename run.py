@@ -10,9 +10,11 @@ from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import cos_sim, semantic_search
 import requests
 from config import Config
+from transformers import AutoTokenizer, AutoModel
 
 app = Flask(__name__, root_path=os.getcwd())
 model = SentenceTransformer(Config.MODEL_PATH)
+model_path = "./models/personalized"  # 个性化模型路径
 
 
 @app.route("/token/sync", methods=["POST"])
@@ -64,8 +66,7 @@ def token_load():
     # print(tokens)
     model.tokenizer.add_tokens(tokens, special_tokens=False)
     model._first_module().auto_model.resize_token_embeddings(len(model.tokenizer))
-    # print(model.tokenizer.tokenize("华宝宝康消费品证券投资基金基金托管费"))
-
+    model.tokenizer.save_pretrained(model_path)
     print("success load token")
 
 
@@ -128,6 +129,11 @@ def computing_embeddings():
 
     return jsonify({"result": embeddings.tolist()})
 
-token_load()
+
+# 加载已有分词
+if os.path.exists(model_path):
+    model.tokenizer = AutoTokenizer.from_pretrained(model_path)
+
+# 运行
 if __name__ == "__main__":
     app.run("0.0.0.0", port=5000)
