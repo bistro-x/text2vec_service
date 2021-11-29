@@ -119,6 +119,12 @@ docker push server.aiknown.cn:31003/ai_service/text2vec_service:master
 python run.py
 ```
 
+or
+
+```shell
+docker-compose -f ./compose/ai_service.yml -f ./consumer/dataknown/ai_service.yml -p dataknown --env-file ./env/dataknown_test.env up -d text2vec_service
+```
+
 ## 使用到的框架
 
 ```shell
