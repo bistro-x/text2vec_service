@@ -1,4 +1,5 @@
 token.txt
+models/*/*
 models/*
 __pycache__
 token_url.json
