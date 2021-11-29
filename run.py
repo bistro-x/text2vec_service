@@ -6,7 +6,7 @@ Documents: https://github.com/shibing624/text2vec
 import os
 
 from flask import request, jsonify, Flask
-from sentence_transformers import SentenceTransformer
+from sentence_transformers import SentenceTransformer, models
 from sentence_transformers.util import cos_sim, semantic_search
 import requests
 from config import Config
@@ -42,28 +42,15 @@ def token_load():
             tokens.extend(data or [])
 
     if Config.TOKEN_URL:
-        save_file_path = "token_url.json"  # 保存文件
         response = requests.get(Config.TOKEN_URL)
 
         if response.ok:
             content = response.json()
             tokens.extend(content.get("data") or [])
-            # 写入缓存文件
-            with open(save_file_path, "w") as token_file:
-                json.dump(content.get("data"), token_file)
         else:
             print("error load token from url")
 
-            # 读取缓存文件
-            if os.path.exists(save_file_path):
-                with open(save_file_path, "r") as token_file:
-                    data = json.load(token_file)
-                    print(data)
-                    tokens.extend(data)
-                    print("load temp file")
-
     tokens = sorted(set(tokens), key=lambda item: len(item), reverse=True)
-    # print(tokens)
     model.tokenizer.add_tokens(tokens, special_tokens=False)
     model._first_module().auto_model.resize_token_embeddings(len(model.tokenizer))
     model.tokenizer.save_pretrained(model_path)
@@ -132,8 +119,12 @@ def computing_embeddings():
 
 # 加载已有分词
 if os.path.exists(model_path):
-    model.tokenizer = AutoTokenizer.from_pretrained(model_path)
-
+    word_embedding_model = models.Transformer(Config.MODEL_PATH)
+    word_embedding_model.tokenizer = AutoTokenizer.from_pretrained(model_path)
+    word_embedding_model.auto_model.resize_token_embeddings(len(word_embedding_model.tokenizer))
+    pooling_model = models.Pooling(word_embedding_model.get_word_embedding_dimension())
+    model = SentenceTransformer(modules=[word_embedding_model, pooling_model])
+    
 # 运行
 if __name__ == "__main__":
     app.run("0.0.0.0", port=5000)
