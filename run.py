@@ -35,37 +35,6 @@ def post_token_load():
     return jsonify({"result": True})
 
 
-def token_load():
-    global model
-    import json
-
-    tokens = []
-    model = SentenceTransformer(Config.MODEL_PATH)
-
-    # 加载分词
-    if Config.TOKEN_PATH and os.path.exists(Config.TOKEN_PATH):
-        with open(Config.TOKEN_PATH, "r") as file:
-            data = file.read().split("\n")
-            tokens.extend(data or [])
-
-    if Config.TOKEN_URL:
-        response = requests.get(Config.TOKEN_URL)
-
-        if response.ok:
-            content = response.json()
-            tokens.extend(content.get("data") or [])
-        else:
-            print("error load token from url")
-            
-    shutil.copytree(Config.MODEL_PATH, personal_model_path)
-
-    tokens = sorted(set(tokens), key=lambda item: len(item), reverse=True)
-    model.tokenizer.add_tokens(tokens, special_tokens=True)
-    model._first_module().auto_model.resize_token_embeddings(len(model.tokenizer))
-    model.save(personal_model_path)
-    print("success load token")
-
-
 @app.route("/tokenize", methods=["POST"])
 def tokenize():
     """
@@ -124,6 +93,37 @@ def computing_embeddings():
     embeddings = model.encode(sentences)
 
     return jsonify({"result": embeddings.tolist()})
+
+
+def token_load():
+    global model
+    import json
+
+    tokens = []
+    model = SentenceTransformer(Config.MODEL_PATH)
+
+    # 加载分词
+    if Config.TOKEN_PATH and os.path.exists(Config.TOKEN_PATH):
+        with open(Config.TOKEN_PATH, "r") as file:
+            data = file.read().split("\n")
+            tokens.extend(data or [])
+
+    if Config.TOKEN_URL:
+        response = requests.get(Config.TOKEN_URL)
+
+        if response.ok:
+            content = response.json()
+            tokens.extend(content.get("data") or [])
+        else:
+            print("error load token from url")
+
+    tokens = sorted(set(tokens), key=lambda item: len(item), reverse=True)
+    model.tokenizer.add_tokens(tokens, special_tokens=True)
+    model._first_module().auto_model.resize_token_embeddings(len(model.tokenizer))
+    model.save(personal_model_path)
+    model = SentenceTransformer(personal_model_path)
+
+    print("success load token")
 
 
 # 运行
