@@ -4,6 +4,7 @@
 Documents: https://github.com/shibing624/text2vec
 """
 import os
+import time
 
 from flask import request, jsonify, Flask
 from sentence_transformers import SentenceTransformer, models
@@ -12,6 +13,7 @@ import requests
 from config import Config
 from transformers import AutoTokenizer, AutoModel
 import shutil
+import schedule
 
 app = Flask(__name__, root_path=os.getcwd())
 
@@ -125,6 +127,13 @@ def token_load():
 
     print("success load token")
 
+
+def test():
+    print(time.time())
+
+
+schedule.every().days.at("00:00").do(token_load)
+schedule.every().minutes.do(token_load)
 
 # 运行
 if __name__ == "__main__":
