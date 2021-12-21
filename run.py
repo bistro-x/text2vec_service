@@ -13,7 +13,7 @@ import requests
 from config import Config
 from transformers import AutoTokenizer, AutoModel
 import shutil
-import schedule
+
 
 app = Flask(__name__, root_path=os.getcwd())
 
@@ -126,10 +126,6 @@ def token_load():
     model = SentenceTransformer(personal_model_path)
 
     print("success load token")
-
-
-def test():
-    print(time.time())
 
 
 # 运行
