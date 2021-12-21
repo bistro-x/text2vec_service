@@ -132,9 +132,6 @@ def test():
     print(time.time())
 
 
-schedule.every().days.at("00:00").do(token_load)
-schedule.every().minutes.do(token_load)
-
 # 运行
 if __name__ == "__main__":
     app.run("0.0.0.0", port=5000)
