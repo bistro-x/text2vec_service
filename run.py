@@ -137,9 +137,8 @@ def auto_token_load():
         token_load()
 
 
-schedule.every().days.at("00:00").do(sync_token_load)
-schedule.every().minutes.do(test)
-
 # 运行
 if __name__ == "__main__":
+    schedule.every().days.at("00:00").do(sync_token_load)
+    schedule.every().minutes.do(test)
     app.run("0.0.0.0", port=5000)
