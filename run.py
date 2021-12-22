@@ -128,14 +128,12 @@ def token_load():
     print("success load token")
 
 
-def test():
-    from flask import current_app
-
-    current_app.logger.info("logged by current_app from main")
+def job():
+    print("schedule is work")
 
 
 def auto_token_load():
-    schedule.every().seconds.do(test)
+    schedule.every().seconds.do(job)
     if Config.AUTO_TOKEN:
         schedule.every().days.at("00:00").do(token_load)
     while True:
