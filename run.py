@@ -134,7 +134,7 @@ def test():
 
 
 def auto_token_load():
-    schedule.every().minutes.do(test)
+    schedule.every().seconds.do(test)
     if Config.AUTO_TOKEN:
         schedule.every().days.at("00:00").do(token_load)
     while True:
