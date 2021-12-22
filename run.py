@@ -14,6 +14,7 @@ from config import Config
 from transformers import AutoTokenizer, AutoModel
 import shutil
 import schedule
+from concurrent.futures.thread import ThreadPoolExecutor
 
 app = Flask(__name__, root_path=os.getcwd())
 
@@ -133,12 +134,14 @@ def test():
 
 
 def auto_token_load():
+    schedule.every().minutes.do(test)
     if Config.AUTO_TOKEN:
-        token_load()
+        schedule.every().days.at("00:00").do(token_load)
+    while True:
+        schedule.run_pending()
 
 
 # 运行
 if __name__ == "__main__":
-    schedule.every().days.at("00:00").do(sync_token_load)
-    schedule.every().minutes.do(test)
+    ThreadPoolExecutor(2).submit(work)
     app.run("0.0.0.0", port=5000)
