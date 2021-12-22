@@ -4,7 +4,6 @@
 Documents: https://github.com/shibing624/text2vec
 """
 import os
-import time
 
 from flask import request, jsonify, Flask
 from sentence_transformers import SentenceTransformer, models
@@ -130,7 +129,9 @@ def token_load():
 
 
 def test():
-    print(time.time())
+    from flask import current_app
+
+    current_app.logger.info("logged by current_app from main")
 
 
 def auto_token_load():
