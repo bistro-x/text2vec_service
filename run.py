@@ -13,7 +13,7 @@ import requests
 from config import Config
 from transformers import AutoTokenizer, AutoModel
 import shutil
-
+import schedule
 
 app = Flask(__name__, root_path=os.getcwd())
 
@@ -127,6 +127,18 @@ def token_load():
 
     print("success load token")
 
+
+def test():
+    print(time.time())
+
+
+def auto_token_load():
+    if Config.AUTO_TOKEN:
+        token_load()
+
+
+schedule.every().days.at("00:00").do(sync_token_load)
+schedule.every().minutes.do(test)
 
 # 运行
 if __name__ == "__main__":
