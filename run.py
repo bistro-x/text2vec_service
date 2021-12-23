@@ -140,7 +140,6 @@ def auto_token_load():
 
 # 运行
 if __name__ == "__main__":
-    scheduler = APScheduler()
     scheduler.init_app(app)
     scheduler.start()
     app.run("0.0.0.0", port=5000)
