@@ -5,15 +5,13 @@ Documents: https://github.com/shibing624/text2vec
 """
 import os
 
-from flask import request, jsonify, Flask
-from sentence_transformers import SentenceTransformer, models
-from sentence_transformers.util import cos_sim, semantic_search
 import requests
+from flask import request, jsonify, Flask
+from flask_apscheduler import APScheduler
+from sentence_transformers import SentenceTransformer
+from sentence_transformers.util import cos_sim, semantic_search
+
 from config import Config
-from transformers import AutoTokenizer, AutoModel
-import shutil
-import schedule
-from concurrent.futures.thread import ThreadPoolExecutor
 
 app = Flask(__name__, root_path=os.getcwd())
 
@@ -99,7 +97,6 @@ def computing_embeddings():
 
 def token_load():
     global model
-    import json
 
     tokens = []
     model = SentenceTransformer(Config.MODEL_PATH)
@@ -132,18 +129,9 @@ def job():
     print("schedule is work")
 
 
-def auto_token_load():
-    schedule.every().seconds.do(job)
-    if Config.AUTO_TOKEN:
-        schedule.every().days.at("00:00").do(token_load)
-    while True:
-        schedule.run_pending()
-
-
 # 运行
 if __name__ == "__main__":
-    try:
-        ThreadPoolExecutor(2).submit(auto_token_load)
-    except Exception as e:
-        print(e)
+    scheduler = APScheduler()
+    scheduler.init_app(app)
+    scheduler.start()
     app.run("0.0.0.0", port=5000)
