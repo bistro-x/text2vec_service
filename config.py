@@ -17,8 +17,3 @@ class Config:
         "TOKEN_URL",
         "http://101.231.133.233:31016/z_know_info/api/domain/token?domain_key=fsfund",
     )  # 词汇文件的接口返回
-
-    JOBS = [
-        {"id": "test1", "func": "scheduler:job", "trigger": "interval", "seconds": 1}
-    ]
-    SCHEDULER_API_ENABLED = True

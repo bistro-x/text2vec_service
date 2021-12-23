@@ -16,6 +16,8 @@ from config import Config
 app = Flask(__name__, root_path=os.getcwd())
 
 personal_model_path = "./models/personalized"  # 个性化模型路径
+scheduler = APScheduler()
+
 
 # 加载已有分词
 if os.path.exists(personal_model_path):
@@ -125,8 +127,15 @@ def token_load():
     print("success load token")
 
 
+@scheduler.task("interval", id="do_job_1", seconds=1)
 def job():
     print("schedule is work")
+
+
+@scheduler.task("cron", id="auto_job_1", day="*", hour="0", minute="0", second="0")
+def auto_token_load():
+    if Config.AUTO_TOKEN:
+        token_load()
 
 
 # 运行
