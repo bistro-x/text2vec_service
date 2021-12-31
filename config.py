@@ -12,7 +12,7 @@ class Config:
 
     MODEL_PATH = os.path.join(MODELS_PATH, MODEL)
 
-    TOKEN_PATH = os.getenv("TOKEN_PATH", "./token.txt")  # 词汇文件
+    TOKEN_PATH = os.getenv("TOKEN_PATH", "./models/token.txt")  # 词汇文件
     TOKEN_URL = os.getenv(
         "TOKEN_URL",
         "http://101.231.133.233:31016/z_know_info/api/domain/token?domain_key=fsfund",
