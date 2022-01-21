@@ -37,6 +37,18 @@ def post_token_load():
     return jsonify({"result": True})
 
 
+@app.route("/token/upload", methods=["POST"])
+def post_token_upload():
+    """
+    同步定义的分词信息
+    :return:
+    """
+    extentd_token = request.json().get("token")
+    token_load(extentd_token, False)
+
+    return jsonify({"result": True})
+
+
 @app.route("/tokenize", methods=["POST"])
 def tokenize():
     """
@@ -97,7 +109,14 @@ def computing_embeddings():
     return jsonify({"result": embeddings.tolist()})
 
 
-def token_load():
+def token_load(extend_token=[], load_from_token_url=True):
+    """
+    加载个性化词汇重新训练模型
+
+    Args:
+        extend_token (list, optional): 外部自定义词汇. Defaults to [].
+        load_from_token_url (bool, optional): 是否从远程地址进行获取词汇数据. Defaults to True.
+    """
     global model
 
     tokens = []
@@ -109,6 +128,7 @@ def token_load():
             data = file.read().split("\n")
             tokens.extend(data or [])
 
+    # 从远程词库获取数据
     if Config.TOKEN_URL:
         response = requests.get(Config.TOKEN_URL)
 
@@ -118,6 +138,10 @@ def token_load():
         else:
             print("error load token from url")
 
+    # 继承扩展词汇
+    tokens.extend(extend_token)
+
+    # 根据大小词汇进行排序
     tokens = sorted(set(tokens), key=lambda item: len(item), reverse=True)
     model.tokenizer.add_tokens(tokens, special_tokens=True)
     model._first_module().auto_model.resize_token_embeddings(len(model.tokenizer))
