@@ -151,17 +151,6 @@ def token_load(extend_token=[], load_from_token_url=True):
     print("success load token")
 
 
-@scheduler.task("interval", id="do_job_1", seconds=1)
-def job():
-    print("schedule is work")
-
-
-@scheduler.task("cron", id="auto_job_1", day="*", hour="0", minute="0", second="0")
-def auto_token_load():
-    if Config.AUTO_TOKEN:
-        token_load()
-
-
 # 运行
 if __name__ == "__main__":
     scheduler.init_app(app)
