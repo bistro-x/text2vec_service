@@ -43,7 +43,7 @@ def post_token_upload():
     同步定义的分词信息
     :return:
     """
-    extentd_token = request.json.get("token")
+    extentd_token = request.json.get("token", [])
     token_load(extentd_token, False)
 
     return jsonify({"result": True})
@@ -129,7 +129,7 @@ def token_load(extend_token=[], load_from_token_url=True):
             tokens.extend(data or [])
 
     # 从远程词库获取数据
-    if load_from_token_url and Config.TOKEN_URL :
+    if load_from_token_url and Config.TOKEN_URL:
         response = requests.get(Config.TOKEN_URL)
 
         if response.ok:
