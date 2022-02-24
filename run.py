@@ -142,6 +142,7 @@ def token_load(extend_token=[], load_from_token_url=True):
     tokens.extend(extend_token)
 
     # 根据大小词汇进行排序
+    tokens = [str(item) for item in tokens]
     tokens = sorted(set(tokens), key=lambda item: len(str(item or '')), reverse=True)
 
     # 计算MD5
