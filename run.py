@@ -124,12 +124,12 @@ def token_load(extend_token=[], load_from_token_url=True):
 
     # 加载分词
     if Config.TOKEN_PATH and os.path.exists(Config.TOKEN_PATH):
-        with open(Config.TOKEN_PATH, "r") as file:
+        with open(Config.TOKEN_PATH, "r", encoding="utf-8") as file:
             data = file.read().split("\n")
             tokens.extend(data or [])
 
     # 从远程词库获取数据
-    if load_from_token_url and Config.TOKEN_URL :
+    if load_from_token_url and Config.TOKEN_URL:
         response = requests.get(Config.TOKEN_URL)
 
         if response.ok:
@@ -143,11 +143,28 @@ def token_load(extend_token=[], load_from_token_url=True):
 
     # 根据大小词汇进行排序
     tokens = sorted(set(tokens), key=lambda item: len(item), reverse=True)
+
+    # 计算MD5
+    md5_file_path = "./models/token_md5.txt"
+    last_md5 = None
+    if os.path.exists(md5_file_path):
+        with open(md5_file_path, "r", encoding="utf-8") as md5_file:
+            last_md5 = md5_file.read()
+
+    import hashlib
+    md5hash = hashlib.md5()
+    md5hash.update("|".join(tokens).encode('utf-8'))
+    md5 = md5hash.hexdigest()
+    if md5 == last_md5:
+        return
+
+    # 训练
     model.tokenizer.add_tokens(tokens, special_tokens=True)
     model._first_module().auto_model.resize_token_embeddings(len(model.tokenizer))
     model.save(personal_model_path)
     model = SentenceTransformer(personal_model_path)
-
+    with open(md5_file_path, "w", encoding="utf-8") as md5_file:
+        md5_file.write(md5)
     print("success load token")
 
 
