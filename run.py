@@ -43,7 +43,7 @@ def post_token_upload():
     同步定义的分词信息
     :return:
     """
-    extentd_token = request.json.get("token")
+    extentd_token = request.json.get("token", [])
     token_load(extentd_token, False)
 
     return jsonify({"result": True})

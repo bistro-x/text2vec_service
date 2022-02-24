@@ -4,3 +4,4 @@ models/*
 __pycache__
 token_url.json
 .pytest_cache
+.idea
