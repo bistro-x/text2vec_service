@@ -142,10 +142,12 @@ def token_load(extend_token=[], load_from_token_url=True):
     tokens.extend(extend_token)
 
     # 根据大小词汇进行排序
-    tokens = [str(item) for item in tokens]
-    tokens = sorted(set(tokens), key=lambda item: len(str(item or '')), reverse=True)
+    tokens = [str(item) for item in tokens if (item and len(item) > 0 and len(item) <= 6)]
+    tokens = list(set(tokens))
 
-    # 计算MD5
+    tokens = sorted(set(tokens), key=lambda item: len(str(item or "")), reverse=True)
+
+    # 计算MD5   
     md5_file_path = "./models/token_md5.txt"
     last_md5 = None
     if os.path.exists(md5_file_path):
@@ -153,14 +155,15 @@ def token_load(extend_token=[], load_from_token_url=True):
             last_md5 = md5_file.read()
 
     import hashlib
+
     md5hash = hashlib.md5()
-    md5hash.update("|".join(tokens).encode('utf-8'))
+    md5hash.update("|".join(tokens).encode("utf-8"))
     md5 = md5hash.hexdigest()
     if md5 == last_md5:
         return
 
     # 训练
-    model.tokenizer.add_tokens(tokens, special_tokens=True)
+    model.tokenizer.add_tokens(tokens, special_tokens=False)
     model._first_module().auto_model.resize_token_embeddings(len(model.tokenizer))
     model.save(personal_model_path)
     model = SentenceTransformer(personal_model_path)
