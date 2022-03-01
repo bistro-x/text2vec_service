@@ -2,7 +2,7 @@ if [ ! -d "./log/" ];then
   mkdir ./log
 fi
 
-core_num=${CORE_NUM:-5}
+core_num=${CORE_NUM:-1}
 time_out=${TIME_OUT:-600}
 param_str=${PARAM_STR}
 

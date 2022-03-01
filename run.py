@@ -165,7 +165,10 @@ def token_load(extend_token=[], load_from_token_url=True):
     # 训练
     model.tokenizer.add_tokens(tokens, special_tokens=False)
     model._first_module().auto_model.resize_token_embeddings(len(model.tokenizer))
+    import shutil
+    shutil.rmtree(personal_model_path)
     model.save(personal_model_path)
+    
     model = SentenceTransformer(personal_model_path)
     with open(md5_file_path, "w", encoding="utf-8") as md5_file:
         md5_file.write(md5)
