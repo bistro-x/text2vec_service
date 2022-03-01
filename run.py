@@ -157,7 +157,7 @@ def token_load(extend_token=[], load_from_token_url=True):
     import hashlib
 
     md5hash = hashlib.md5()
-    md5hash.update(Config.MODEL+"|".join(tokens).encode("utf-8"))
+    md5hash.update((Config.MODEL+"|".join(tokens)).encode("utf-8"))
     md5 = md5hash.hexdigest()
     if md5 == last_md5:
         return
