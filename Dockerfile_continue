@@ -1,5 +1,8 @@
 FROM server.aiknown.cn:31003/ai_service/text2vec_service:master
+WORKDIR /opt/service/
 
 RUN pip3 install -r ./requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 COPY "./" "./"
+RUN rm -rf ./.vscode ./log ./models ./test ./.pytest_cache ./__pycache__
+
 RUN chmod +x ./run.sh

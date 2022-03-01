@@ -1,0 +1,7 @@
+log/*
+models/*
+test/*
+.pytest_cache/*
+__pycache__/*
+.vscode/*
+nohup.out
