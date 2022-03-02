@@ -14,6 +14,5 @@ class Config:
 
     TOKEN_PATH = os.getenv("TOKEN_PATH", "./models/token.txt")  # 词汇文件
     TOKEN_URL = os.getenv(
-        "TOKEN_URL",
-        "http://101.231.133.233:31016/z_know_info/api/domain/token",
+        "TOKEN_URL"
     )  # 词汇文件的接口返回
