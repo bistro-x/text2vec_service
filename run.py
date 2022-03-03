@@ -19,8 +19,8 @@ personal_model_path = "./models/personalized"  # 个性化模型路径
 scheduler = APScheduler()
 
 
-# 加载已有分词
-if os.path.exists(personal_model_path):
+# 有个性化模型，并且支持模型训练
+if os.path.exists(personal_model_path) and Config.MODELS_TRAIN:
     model = SentenceTransformer(personal_model_path)
 else:
     model = SentenceTransformer(Config.MODEL_PATH)
@@ -61,6 +61,18 @@ def tokenize():
     sentences = param.pop("sentences")
     return jsonify({"result": model.tokenizer.tokenize(sentences)})
 
+@app.route("/computing_embeddings", methods=["POST"])
+def computing_embeddings():
+    """
+    计算句向量
+    :return:
+    """
+    param = {**(request.form or {}), **(request.json or {})}
+    sentences = param.pop("sentences")
+    embeddings = model.encode(sentences)
+
+    return jsonify({"result": embeddings.tolist()})
+
 
 @app.route("/semantic_search", methods=["POST"])
 def paraphrase_semantic_search():
@@ -95,18 +107,6 @@ def paraphrase_cos_sim():
 
     return jsonify({"result": cosine_scores.tolist()})
 
-
-@app.route("/computing_embeddings", methods=["POST"])
-def computing_embeddings():
-    """
-    计算句向量
-    :return:
-    """
-    param = {**(request.form or {}), **(request.json or {})}
-    sentences = param.pop("sentences")
-    embeddings = model.encode(sentences)
-
-    return jsonify({"result": embeddings.tolist()})
 
 
 def token_load(extend_token=[], load_from_token_url=True):
