@@ -86,9 +86,10 @@
 
 | 分组     | 配置项       | 说明                 |
 | ------- | ------------| -------------------- |
-| 模型参数 | MODEL        | 需要调用的模型名称     |
+| 模型参数 | MODEL        | 需要调用的模型名称  默认 paraphrase-multilingual-mpnet-base-v2 小模型 paraphrase-multilingual-MiniLM-L12-v2   |
 | 模型参数 | MODELS_PATH  | 所有模型的存储位置     |
 | 模型参数 | MODEL_PATH   | 当前服务调用的模型位置  |
+| 模型参数 | MODELS_TRAIN | 是否支持个性话模型，默认 False |
 
 ## 文件目录说明
 
