@@ -61,6 +61,7 @@ def tokenize():
     sentences = param.pop("sentences")
     return jsonify({"result": model.tokenizer.tokenize(sentences)})
 
+
 @app.route("/computing_embeddings", methods=["POST"])
 def computing_embeddings():
     """
@@ -108,7 +109,6 @@ def paraphrase_cos_sim():
     return jsonify({"result": cosine_scores.tolist()})
 
 
-
 def token_load(extend_token=[], load_from_token_url=True):
     """
     加载个性化词汇重新训练模型
@@ -142,12 +142,14 @@ def token_load(extend_token=[], load_from_token_url=True):
     tokens.extend(extend_token)
 
     # 根据大小词汇进行排序
-    tokens = [str(item) for item in tokens if (item and len(item) > 0 and len(item) <= 6)]
+    tokens = [
+        str(item) for item in tokens if (item and len(item) > 0 and len(item) <= 6)
+    ]
     tokens = list(set(tokens))
 
     tokens = sorted(set(tokens), key=lambda item: len(str(item or "")), reverse=True)
 
-    # 计算MD5   
+    # 计算MD5
     md5_file_path = "./models/token_md5.txt"
     last_md5 = None
     if os.path.exists(md5_file_path):
@@ -157,7 +159,7 @@ def token_load(extend_token=[], load_from_token_url=True):
     import hashlib
 
     md5hash = hashlib.md5()
-    md5hash.update((Config.MODEL+"|".join(tokens)).encode("utf-8"))
+    md5hash.update((Config.MODEL + "|".join(tokens)).encode("utf-8"))
     md5 = md5hash.hexdigest()
     if md5 == last_md5:
         return
@@ -166,9 +168,13 @@ def token_load(extend_token=[], load_from_token_url=True):
     model.tokenizer.add_tokens(tokens, special_tokens=False)
     model._first_module().auto_model.resize_token_embeddings(len(model.tokenizer))
     import shutil
-    shutil.rmtree(personal_model_path)
+
+    # 存在个性化模型，就删除
+    if os.path.exists(personal_model_path):
+        shutil.rmtree(personal_model_path)
+
     model.save(personal_model_path)
-    
+
     model = SentenceTransformer(personal_model_path)
     with open(md5_file_path, "w", encoding="utf-8") as md5_file:
         md5_file.write(md5)
