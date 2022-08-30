@@ -10,7 +10,6 @@ from flask import request, jsonify, Flask
 from flask_apscheduler import APScheduler
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import cos_sim, semantic_search
-
 from config import Config
 
 app = Flask(__name__, root_path=os.getcwd())
@@ -100,13 +99,47 @@ def paraphrase_cos_sim():
     :return:
     """
     param = {**(request.form or {}), **(request.json or {})}
-    sentences1 = param.pop("sentences1")
-    sentences2 = param.pop("sentences2")
-    embeddings1 = model.encode(sentences1)
-    embeddings2 = model.encode(sentences2)
+    sentence1 = param.get("sentence1") or param.get("sentences1")
+    sentence2 = param.get("sentence2") or param.get("sentences2")
+
+    embeddings1 = model.encode(sentence1)
+    embeddings2 = model.encode(sentence2)
+
     cosine_scores = cos_sim(embeddings1, embeddings2)
 
     return jsonify({"result": cosine_scores.tolist()})
+
+
+@app.route("/cluster", methods=["POST"])
+def text_cluster():
+    """
+    计算句子之间的相似度值
+    :return:
+    """
+    param = {**(request.form or {}), **(request.json or {})}
+
+    sentences = param.pop("sentences")  # 句子
+    min_community_size = param.pop("min_community_size", 2)  # 分组最小数
+    threshold = param.pop("threshold", 0.8)  # 阈值
+    encode_batch_size = param.pop("encode_batch_size", 32)  # 阈值
+
+    corpus_embeddings = model.encode(
+        sentences, convert_to_tensor=True, batch_size=encode_batch_size
+    )
+
+    # fast_clustering
+    from sentence_transformers import util
+
+    # 计算分组
+    clusters = util.community_detection(
+        corpus_embeddings,
+        min_community_size=min_community_size,
+        threshold=threshold,
+        **param
+    )
+
+    # 返回索引
+    return jsonify({"result": clusters})
 
 
 def token_load(extend_token=[], load_from_token_url=True):
@@ -183,6 +216,7 @@ def token_load(extend_token=[], load_from_token_url=True):
 
 # 运行
 if __name__ == "__main__":
+    print(app.url_map)
     scheduler.init_app(app)
     scheduler.start()
     app.run("0.0.0.0", port=5000)
