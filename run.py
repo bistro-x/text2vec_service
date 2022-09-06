@@ -134,8 +134,7 @@ def text_cluster():
     clusters = util.community_detection(
         corpus_embeddings,
         min_community_size=min_community_size,
-        threshold=threshold,
-        **param
+        threshold=threshold
     )
 
     # 返回索引
