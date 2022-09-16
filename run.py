@@ -83,10 +83,10 @@ def paraphrase_semantic_search():
     global model
 
     param = {**(request.form or {}), **(request.json or {})}
-    sentences1 = param.pop("sentences1")
-    sentences2 = param.pop("sentences2")
-    embeddings1 = model.encode(sentences1)
-    embeddings2 = model.encode(sentences2)
+    sentence1 = param.get("sentence1") or param.get("sentences1")
+    sentence2 = param.get("sentence2") or param.get("sentences2")
+    embeddings1 = model.encode(sentence1)
+    embeddings2 = model.encode(sentence2)
     hits = semantic_search(embeddings1, embeddings2, **param)
 
     return jsonify({"result": hits})
@@ -95,7 +95,7 @@ def paraphrase_semantic_search():
 @app.route("/cos_sim", methods=["POST"])
 def paraphrase_cos_sim():
     """
-    计算句子之间的相似度值
+    计算句子之间的cos_sim相似度值
     :return:
     """
     param = {**(request.form or {}), **(request.json or {})}
