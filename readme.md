@@ -30,13 +30,13 @@
 
 ```shell
 # 初始化打包
-nohup docker build . -f ./Dockerfile -t server.aiknown.cn:31003/ai_service/text2vec_service:master &
+nohup docker build . -f ./Dockerfile -t wuhanchu/text2vec_service:master &
 
 # 持续更新
-docker build . -f ./Dockerfile_continue -t server.aiknown.cn:31003/ai_service/text2vec_service:master
+docker build . -f ./Dockerfile_continue -t wuhanchu/text2vec_service:master
 
 # push
-docker push server.aiknown.cn:31003/ai_service/text2vec_service:master
+docker push wuhanchu/text2vec_service:master
 ```
 
 ## 部署/运行
