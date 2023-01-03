@@ -83,8 +83,8 @@ def paraphrase_semantic_search():
     global model
 
     param = {**(request.form or {}), **(request.json or {})}
-    sentence1 = param.get("sentence1") or param.get("sentences1")
-    sentence2 = param.get("sentence2") or param.get("sentences2")
+    sentence1 = param.pop("sentence1", None) or param.pop("sentences1", None)
+    sentence2 = param.pop("sentence2", None) or param.pop("sentences2", None)
     embeddings1 = model.encode(sentence1)
     embeddings2 = model.encode(sentence2)
     hits = semantic_search(embeddings1, embeddings2, **param)
@@ -99,8 +99,8 @@ def paraphrase_cos_sim():
     :return:
     """
     param = {**(request.form or {}), **(request.json or {})}
-    sentence1 = param.get("sentence1") or param.get("sentences1")
-    sentence2 = param.get("sentence2") or param.get("sentences2")
+    sentence1 = param.pop("sentence1", None) or param.pop("sentences1", None)
+    sentence2 = param.pop("sentence2", None) or param.pop("sentences2", None)
 
     embeddings1 = model.encode(sentence1)
     embeddings2 = model.encode(sentence2)
