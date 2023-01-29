@@ -30,13 +30,13 @@
 
 ```shell
 # 初始化打包
-nohup docker build . -f ./Dockerfile -t wuhanchu/text2vec_service:master &
+nohup docker build . -f ./Dockerfile -t wuhanchu/text2vec_service:latest &
 
 # 持续更新
-docker build . -f ./Dockerfile_continue -t wuhanchu/text2vec_service:master
+docker build . -f ./Dockerfile_continue -t wuhanchu/text2vec_service:latest
 
 # push
-docker push wuhanchu/text2vec_service:master
+docker push wuhanchu/text2vec_service:latest
 ```
 
 ## 部署/运行

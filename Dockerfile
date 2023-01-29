@@ -1,4 +1,4 @@
-FROM server.aiknown.cn:31003/z_ai_frame/centos:torch
+FROM wuhanchu/centos:torch
 
 WORKDIR /opt/service/
 COPY "./" "./"
