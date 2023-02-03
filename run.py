@@ -119,6 +119,9 @@ def text_cluster():
     param = {**(request.form or {}), **(request.json or {})}
 
     sentences = param.pop("sentences")  # 句子
+    if not sentences or len(sentences) < 3:
+        return "sentences 必须传入数据,并且数量大于 3 个!", 500
+
     min_community_size = param.pop("min_community_size", 2)  # 分组最小数
     threshold = param.pop("threshold", 0.8)  # 阈值
     encode_batch_size = param.pop("encode_batch_size", 32)  # 阈值
@@ -132,9 +135,7 @@ def text_cluster():
 
     # 计算分组
     clusters = util.community_detection(
-        corpus_embeddings,
-        min_community_size=min_community_size,
-        threshold=threshold
+        corpus_embeddings, min_community_size=min_community_size, threshold=threshold
     )
 
     # 返回索引

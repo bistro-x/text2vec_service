@@ -6,3 +6,4 @@ token_url.json
 .pytest_cache
 .idea
 nohup.out
+.vscode
