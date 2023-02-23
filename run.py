@@ -7,7 +7,6 @@ import os
 
 import requests
 from flask import request, jsonify, Flask
-from flask_apscheduler import APScheduler
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import cos_sim, semantic_search
 from config import Config
@@ -15,7 +14,6 @@ from config import Config
 app = Flask(__name__, root_path=os.getcwd())
 
 personal_model_path = "./models/personalized"  # 个性化模型路径
-scheduler = APScheduler()
 
 
 # 有个性化模型，并且支持模型训练
@@ -42,8 +40,8 @@ def post_token_upload():
     同步定义的分词信息
     :return:
     """
-    extentd_token = request.json.get("token", [])
-    token_load(extentd_token, False)
+    extend_token = request.json.get("token", [])
+    token_load(extend_token, False)
 
     return jsonify({"result": True})
 
@@ -127,7 +125,7 @@ def text_cluster():
     encode_batch_size = param.pop("encode_batch_size", 32)  # 阈值
 
     corpus_embeddings = model.encode(
-        sentences, convert_to_tensor=True, batch_size=encode_batch_size
+        [""]+sentences, convert_to_tensor=True, batch_size=encode_batch_size
     )
 
     # fast_clustering
@@ -137,9 +135,14 @@ def text_cluster():
     clusters = util.community_detection(
         corpus_embeddings, min_community_size=min_community_size, threshold=threshold
     )
+    
+    result = []
+    for item in clusters:
+        if 0 not in item:
+            result.append([i-1 for i  in item])
 
     # 返回索引
-    return jsonify({"result": clusters})
+    return jsonify({"result": result})
 
 
 def token_load(extend_token=[], load_from_token_url=True):
@@ -214,6 +217,4 @@ def token_load(extend_token=[], load_from_token_url=True):
 # 运行
 if __name__ == "__main__":
     print(app.url_map)
-    scheduler.init_app(app)
-    scheduler.start()
     app.run("0.0.0.0", port=5000)

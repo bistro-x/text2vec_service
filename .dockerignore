@@ -1,4 +1,5 @@
 log/*
+models
 models/*
 test/*
 .pytest_cache/*
