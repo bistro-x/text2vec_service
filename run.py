@@ -22,7 +22,7 @@ if os.path.exists(personal_model_path) and Config.MODELS_TRAIN:
 else:
     # 判断是否存在模型文件,不存在就下载
     if not os.path.exists(Config.MODEL_PATH):
-            model = SentenceTransformer(Config.MODELs)
+            model = SentenceTransformer(Config.MODEL)
             model.save(Config.MODEL_PATH)
     else:
         model = SentenceTransformer(Config.MODEL_PATH)

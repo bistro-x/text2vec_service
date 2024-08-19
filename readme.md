@@ -33,10 +33,8 @@
 nohup docker build . -f ./Dockerfile -t wuhanchu/text2vec_service:latest &
 
 # 持续更新
-docker build . -f ./Dockerfile.continue -t wuhanchu/text2vec_service:1.3.8
-
-# push
-docker push wuhanchu/text2vec_service:latest
+docker build . -f ./Dockerfile.continue -t wuhanchu/text2vec_service:1.3.9
+docker push wuhanchu/text2vec_service:1.3.9
 ```
 
 ## 部署/运行
