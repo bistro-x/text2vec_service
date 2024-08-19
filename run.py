@@ -20,7 +20,12 @@ personal_model_path = "./models/personalized"  # 个性化模型路径
 if os.path.exists(personal_model_path) and Config.MODELS_TRAIN:
     model = SentenceTransformer(personal_model_path)
 else:
-    model = SentenceTransformer(Config.MODEL_PATH)
+    # 判断是否存在模型文件,不存在就下载
+    if not os.path.exists(Config.MODEL_PATH):
+            model = SentenceTransformer(Config.MODELs)
+            model.save(Config.MODEL_PATH)
+    else:
+        model = SentenceTransformer(Config.MODEL_PATH)
 
 
 @app.route("/token/sync", methods=["POST"])
